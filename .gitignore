@@ -1,0 +1,32 @@
+# ===== 依赖 =====
+node_modules/
+
+# ===== 密钥 / 环境变量（DeepSeek API Key 等绝不入库）=====
+# 说明：本项目的 API Key 仅在浏览器内存中保存，不写入任何文件；
+# 以下规则为防御性兜底，避免任何密钥文件被误提交。
+.env
+.env.*
+*.key
+*.pem
+*.p12
+secrets.json
+secret*.json
+**/*apikey*
+**/*api_key*
+**/*api-key*
+
+# ===== 本地工具 / 临时产物 =====
+.inline-check.js
+*.log
+dist/
+coverage/
+
+# ===== 编辑器 / 操作系统 =====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ===== Claude Code 本地配置（保留 launch.json，忽略本地权限/缓存）=====
+.claude/settings.local.json
+.claude/.cache/
