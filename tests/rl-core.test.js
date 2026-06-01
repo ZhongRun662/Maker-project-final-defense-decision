@@ -84,25 +84,25 @@ test('surfaceData 生成完整网格并定位深渊 / 巅峰', () => {
 const TRAINERS = ['trainPPO', 'trainDPO', 'trainQLearning', 'trainRLHF'];
 
 for (const name of TRAINERS) {
-  test(`${name}: 输出结构与确定性`, () => {
+  test(`${name}: 输出结构与确定性`, async () => {
     const run = () => rl[name]({ episodes: 1000, seed: 2025 });
-    const r1 = run();
-    const r2 = run();
+    const r1 = await run();
+    const r2 = await run();
     assert.strictEqual(r1.pGo.length, 1000);
     assert.strictEqual(r1.reward.length, 1000);
     assert.deepStrictEqual(r1.pGo, r2.pGo, '相同种子必须完全可复现');
     assert.deepStrictEqual(r1.reward, r2.reward);
   });
 
-  test(`${name}: 把「去答辩」概率从 85% 收敛到接近 0`, () => {
-    const r = rl[name]({ episodes: 1000, seed: 2025, initPGo: 0.85 });
+  test(`${name}: 把「去答辩」概率从 85% 收敛到接近 0`, async () => {
+    const r = await rl[name]({ episodes: 1000, seed: 2025, initPGo: 0.85 });
     assert.ok(r.pGo[0] > 0.5, '初始应保留愧疚冲动 (>50%)');
     assert.ok(r.finalPGo < 0.05, `${name} 末态 P(去)=${r.finalPGo} 应 < 5%`);
     assert.ok(r.finalPGo < r.pGo[0], '概率必须整体下降');
   });
 
-  test(`${name}: 期望收益从负数深渊回升并稳定在 +80 附近`, () => {
-    const r = rl[name]({ episodes: 1000, seed: 2025 });
+  test(`${name}: 期望收益从负数深渊回升并稳定在 +80 附近`, async () => {
+    const r = await rl[name]({ episodes: 1000, seed: 2025 });
     assert.ok(r.reward[0] < 0, '起点必须在负收益深渊');
     assert.ok(r.finalReward > 78, `末态收益 ${r.finalReward} 应逼近 STAY_REWARD(80)`);
     assert.ok(r.finalReward <= rl.STAY_REWARD + 1e-6);
@@ -110,16 +110,16 @@ for (const name of TRAINERS) {
   });
 }
 
-test('PPO 与 Q-Learning 收敛更彻底（P(去) < 1%）', () => {
-  approx(rl.trainPPO({ seed: 2025 }).finalPGo, 0, 0.01);
-  approx(rl.trainQLearning({ seed: 2025 }).finalPGo, 0, 0.01);
+test('PPO 与 Q-Learning 收敛更彻底（P(去) < 1%）', async () => {
+  approx((await rl.trainPPO({ seed: 2025 })).finalPGo, 0, 0.01);
+  approx((await rl.trainQLearning({ seed: 2025 })).finalPGo, 0, 0.01);
 });
 
 // ---------------------------------------------------------------------------
 // 多算法对比入口
 // ---------------------------------------------------------------------------
-test('runAll 同时跑四种算法用于横向对比', () => {
-  const all = rl.runAll({ episodes: 1000, seed: 2025 });
+test('runAll 同时跑四种算法用于横向对比', async () => {
+  const all = await rl.runAll({ episodes: 1000, seed: 2025 });
   for (const k of ['ppo', 'dpo', 'ql', 'rlhf']) {
     assert.ok(all[k], `缺少算法结果: ${k}`);
     assert.strictEqual(all[k].reward.length, 1000);
