@@ -1,0 +1,12 @@
+{
+  "name": "maker-defense-decision-dashboard",
+  "version": "1.0.0",
+  "description": "用强化学习 + 多专家并发锐评，硬核论证要不要去给烂尾创客项目擦屁股答辩的赛博朋克决策大屏",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  },
+  "keywords": ["reinforcement-learning", "ppo", "dpo", "rlhf", "echarts-gl", "deepseek", "cyberpunk"],
+  "license": "MIT"
+}
